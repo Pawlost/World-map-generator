@@ -1,0 +1,261 @@
+[gd_scene load_steps=10 format=2]
+
+[ext_resource path="res://scripts/RootControler.cs" type="Script" id=1]
+[ext_resource path="res://map.png" type="Texture" id=2]
+[ext_resource path="res://scenes/HumidityConfig.tscn" type="PackedScene" id=3]
+[ext_resource path="res://scenes/CirculationConfig.tscn" type="PackedScene" id=4]
+[ext_resource path="res://scenes/GeneralConfig.tscn" type="PackedScene" id=5]
+[ext_resource path="res://scenes/TemperatureConfig.tscn" type="PackedScene" id=6]
+[ext_resource path="res://scenes/ElevationConfig.tscn" type="PackedScene" id=7]
+[ext_resource path="res://scenes/PrecipitationConfig.tscn" type="PackedScene" id=8]
+[ext_resource path="res://scripts/Controler.cs" type="Script" id=9]
+
+[node name="Root" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Menu" type="Control" parent="."]
+anchor_top = 0.05
+anchor_right = 1.0
+anchor_bottom = 0.15
+margin_left = 1.0
+margin_right = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Load" type="Button" parent="Menu"]
+anchor_left = 0.05
+anchor_top = 0.5
+anchor_right = 0.05
+anchor_bottom = 0.5
+margin_right = 10.0
+margin_bottom = 10.0
+text = "Load"
+
+[node name="Save" type="Button" parent="Menu"]
+anchor_left = 0.1
+anchor_top = 0.5
+anchor_right = 0.1
+anchor_bottom = 0.5
+margin_right = 41.0
+margin_bottom = 10.0
+text = "Save"
+
+[node name="Save as" type="Button" parent="Menu"]
+anchor_left = 0.15
+anchor_top = 0.5
+anchor_right = 0.15
+anchor_bottom = 0.5
+margin_right = 41.0
+margin_bottom = 10.0
+text = "Save as"
+
+[node name="UseEarth" type="CheckBox" parent="Menu"]
+anchor_left = 0.25
+anchor_top = 0.5
+anchor_right = 0.25
+anchor_bottom = 0.5
+margin_right = 41.0
+margin_bottom = 10.0
+text = "Use earth"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Path" type="Label" parent="Menu"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_right = 300.0
+margin_bottom = 14.0
+text = "Path: "
+valign = 1
+
+[node name="Progress" type="Control" parent="."]
+anchor_left = 0.45
+anchor_top = 0.925
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="Progress"]
+margin_right = 1.0
+margin_bottom = 14.0
+text = "Generating"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ProgressBar" type="ProgressBar" parent="Progress"]
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 1.0
+step = 1.0
+page = 1.0
+
+[node name="Map" type="ScrollContainer" parent="."]
+anchor_left = 0.45
+anchor_top = 0.2
+anchor_right = 1.0
+anchor_bottom = 0.9
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Map"]
+margin_right = 500.0
+margin_bottom = 250.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Map/HBoxContainer"]
+margin_right = 500.0
+margin_bottom = 250.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MapImage" type="TextureRect" parent="Map/HBoxContainer/VBoxContainer"]
+margin_right = 500.0
+margin_bottom = 250.0
+texture = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Title" type="Label" parent="."]
+anchor_right = 1.0
+margin_bottom = 14.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "World map generator"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Sliders" type="TabContainer" parent="."]
+anchor_top = 0.2
+anchor_right = 0.4
+anchor_bottom = 0.85
+tab_align = 0
+script = ExtResource( 9 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="General" parent="Sliders" instance=ExtResource( 5 )]
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
+
+[node name="Precipitation" parent="Sliders" instance=ExtResource( 8 )]
+visible = false
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
+
+[node name="Circulation" parent="Sliders" instance=ExtResource( 4 )]
+visible = false
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
+
+[node name="Humidity" parent="Sliders" instance=ExtResource( 3 )]
+visible = false
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
+
+[node name="Temperature" parent="Sliders" instance=ExtResource( 6 )]
+visible = false
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
+
+[node name="Elevation" parent="Sliders" instance=ExtResource( 7 )]
+visible = false
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
+
+[node name="LoadDialog" type="FileDialog" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -500.0
+margin_top = -250.0
+margin_right = 500.0
+margin_bottom = 250.0
+window_title = "Open a File"
+resizable = true
+dialog_hide_on_ok = true
+mode = 0
+access = 2
+filters = PoolStringArray( "*.conf" )
+current_dir = "C:/Users/Pawlost/Documents/GameProjects/ROTO/Godot/World-map-generator"
+current_path = "C:/Users/Pawlost/Documents/GameProjects/ROTO/Godot/World-map-generator/"
+
+[node name="SaveAsDialog" type="FileDialog" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -500.0
+margin_top = -250.0
+margin_right = 500.0
+margin_bottom = 250.0
+resizable = true
+access = 2
+filters = PoolStringArray( "*.conf" )
+current_dir = "C:/Users/Pawlost/Documents/GameProjects/ROTO/Godot/World-map-generator"
+current_path = "C:/Users/Pawlost/Documents/GameProjects/ROTO/Godot/World-map-generator/"
+
+[node name="SaveDialog" type="AcceptDialog" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -200.0
+margin_top = -50.0
+margin_right = 200.0
+margin_bottom = 50.0
+window_title = "File Saved"
+resizable = true
+dialog_text = "Configuration was successfully saved to your latest config file."
+
+[node name="Generate" type="Button" parent="."]
+anchor_top = 0.9
+anchor_right = 0.4
+anchor_bottom = 1.0
+text = "Generate"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[editable path="Sliders/General"]
+
+[editable path="Sliders/Precipitation"]
+
+[editable path="Sliders/Precipitation/Circulation intensity"]
+
+[editable path="Sliders/Circulation"]
+
+[editable path="Sliders/Humidity"]
+
+[editable path="Sliders/Temperature"]
+
+[editable path="Sliders/Elevation"]

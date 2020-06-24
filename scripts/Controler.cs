@@ -1,129 +1,286 @@
-using System;
 using Godot;
 
-public class Controler : Node
-{
-
-    [Export]private string BIOME_DISTRIBUTION_PATH =  "./assets/Biome_distribution.png";
-    [Export]private string IMAGE_SAVE_NAME =  "lol.png";
-    [Export] private int SEED = 1234;
-    [Export] private int TERRAIN_MULTIPLAIER = 2;
-    [Export] private int AVERAGE_TERRAIN_HIGHT = 50;
-    [Export] private int MAX_ELEVATION = 100;
-    [Export] private float FREQUENCY = 0.1F;
-    [Export] private bool USE_DEFAULT_CONFIG = true;
-    [Export] private int LATITUDE = 500;
-    [Export] private int LONGITUDE = 500;
-    [Export] private bool GENERATE_NOISE = true;
-
-    private Weltschmerz weltschmerz;
-    private TextureRect canvas;
-    private Image map;
-
-    private Image biomMap;
-
+public class Controler : Node {
     private Config config;
+    
+    //General
+    private SpinBox seed;
+	private SpinBox latitude;
+	private SpinBox longitude;
 
-    // Called when the node enters the scene tree for the first time.
-    public override void _Ready()
-    {
-      
-        weltschmerz = new Weltschmerz();
+        //Precipititation
+    private Slider circulationIntensitySlider;
+	private SpinBox circulationIntensityBox;
 
-        canvas = new TextureRect();
+	private Slider precipitationIntesitySlider;
+	private SpinBox precipitationIntesityBox;
 
-        biomMap = IOManager.LoadImage(BIOME_DISTRIBUTION_PATH);
-        biomMap.Lock();
+	private Slider maxPrecipitationSlider;
+	private SpinBox maxPrecipitationBox;
 
-        if(GENERATE_NOISE){
-            GenerateNoiseImage();
-        }else{
-            GenerateBiomImage();
-        }
+    //Circulation
+    private Slider windIntesitySlider;
+	private SpinBox windIntesityBox;
+
+	private Slider windRangeSlider;
+	private SpinBox windRangeBox;
+
+	private SpinBox pressureAtSeaLevelBox;
+
+    //Humidity
+    private Slider transpirationSlider;
+	private SpinBox transpirationBox;
+
+	private Slider evaporationSlider;
+	private SpinBox evaporationBox;
+
+    //Temperature
+    private Slider maxTemperatureSlider;
+	private SpinBox maxTemperatureBox;
+
+	private Slider minTemperatureSlider;
+	private SpinBox minTemperatureBox;
+
+    //Elevation
+    private SpinBox minElevation;
+	private SpinBox maxElevation;
+	private SpinBox waterLevel;
+	private SpinBox frequencyBox;
+	private Slider frequencySlider;
+	private SpinBox octavesBox;
+	private Slider octavesSlider;
+
+	public override void _Ready () {
+
+        //General
+        seed = (SpinBox) FindNode ("Seed").GetChild (1);
+		longitude = (SpinBox) FindNode ("Longitude").GetChild (1);
+		latitude = (SpinBox) FindNode ("Latitude").GetChild (1);
+
+        //Precipitation
+        circulationIntensitySlider = (Slider) FindNode ("Circulation intensity").GetChild (1);
+		circulationIntensityBox = (SpinBox) FindNode ("Circulation intensity").GetChild (2);
+
+		precipitationIntesitySlider = (Slider) FindNode ("Precipitation Intensity").GetChild (1);
+		precipitationIntesityBox = (SpinBox) FindNode ("Precipitation Intensity").GetChild (2);
+
+		maxPrecipitationSlider = (Slider) FindNode ("Max Precipitation").GetChild (1);
+		maxPrecipitationBox = (SpinBox) FindNode ("Max Precipitation").GetChild (2);
+
+        //Circulation
+        windIntesitySlider = (Slider) FindNode ("Wind Intesity").GetChild (1);
+		windIntesityBox = (SpinBox) FindNode ("Wind Intesity").GetChild (2);
+
+		windRangeSlider = (Slider) FindNode ("Wind Range").GetChild (1);
+		windRangeBox = (SpinBox) FindNode ("Wind Range").GetChild (2);
+
+		pressureAtSeaLevelBox = (SpinBox) FindNode ("Pressure at sea level").GetChild (1);
+
+        //Humidity
+        
+		transpirationSlider = (Slider) FindNode ("Transpiration").GetChild (1);
+		transpirationBox = (SpinBox) FindNode ("Transpiration").GetChild (2);
+
+		evaporationSlider = (Slider) FindNode ("Evaporation").GetChild (1);
+		evaporationBox = (SpinBox) FindNode ("Evaporation").GetChild (2);
+
+        //Temperature
+        
+		maxTemperatureSlider = (Slider) FindNode ("Max Temperature").GetChild (1);
+		maxTemperatureBox = (SpinBox) FindNode ("Max Temperature").GetChild (2);
+
+		minTemperatureSlider = (Slider) FindNode ("Min Temperature").GetChild (1);
+		minTemperatureBox = (SpinBox) FindNode ("Min Temperature").GetChild (2);
+
+        //Elevation
+        
+        minElevation = (SpinBox) FindNode ("Min elevation").GetChild (1);
+		maxElevation = (SpinBox) FindNode ("Max elevation").GetChild (1);
+		waterLevel = (SpinBox) FindNode ("Water Level").GetChild (1);
+		frequencySlider = (Slider) FindNode ("Frequency").GetChild (1);
+		frequencyBox = (SpinBox) FindNode ("Frequency").GetChild (2);
+		octavesSlider = (Slider) FindNode ("Octaves").GetChild (1);
+		octavesBox = (SpinBox) FindNode ("Octaves").GetChild (2);
     }
 
-    private void GenerateBiomImage(){
-        SetConfiguration();
+    public void Init(Config config){
+        
+        this.config = config;
 
-        weltschmerz.Configure(config);
+        //General
+        
+		seed.Value  = config.map.seed;
+		latitude.Value = config.map.latitude;
+		longitude.Value = config.map.longitude;
 
-        map = new Image();
-        map.Create(config.longitude, config.latitude, false, biomMap.GetFormat());
-        double maxTemperature = Math.Abs(config.minTemperature) + config.maxTemperature;
+		seed.Connect ("value_changed", this, "BoxTriggered");
+		longitude.Connect ("value_changed", this, "BoxTriggered");
+		latitude.Connect ("value_changed", this, "BoxTriggered");
 
-        map.Lock();
-        for(int x = 0; x < config.longitude; x++){
-            for(int y = 0; y < config.latitude; y ++){
+             //Precipitation
+        circulationIntensitySlider.Value = config.precipitation.circulation_intensity;
+		circulationIntensityBox.Value = config.precipitation.circulation_intensity;
 
-        double elevation = weltschmerz.GetElevation(x, y);
-        double temperature = weltschmerz.GetTemperature(y, elevation);
-        temperature = (biomMap.GetHeight()*((temperature + maxTemperature) * (biomMap.GetWidth()/maxTemperature)))/biomMap.GetWidth();
-        System.Numerics.Vector2 airFlow = weltschmerz.GetAirFlow(x, y);
-        double precipitation = weltschmerz.GetPrecipitation(x, y, elevation, temperature, airFlow);
-        precipitation = (biomMap.GetWidth() * precipitation)/biomMap.GetHeight();
+		precipitationIntesitySlider.Value = config.precipitation.precipitation_intensity;
+		precipitationIntesityBox.Value = config.precipitation.precipitation_intensity;
 
-        precipitation = Math.Min(Math.Max(precipitation, 0), biomMap.GetHeight() - 1);
-        temperature =  Math.Min(Math.Max(temperature, 0), biomMap.GetWidth() - 1);
+		maxPrecipitationSlider.Value = config.precipitation.max_precipitation;
+		maxPrecipitationBox.Value = config.precipitation.max_precipitation;
 
-        int posY = (int)Math.Min(precipitation, temperature);
-        int posX = (int)Math.Min(temperature, precipitation);
+		circulationIntensityBox.Connect ("value_changed", this, "BoxTriggered");
+		precipitationIntesityBox.Connect ("value_changed", this, "BoxTriggered");
+		maxPrecipitationBox.Connect ("value_changed", this, "BoxTriggered");
 
-        if(!WeltschmerzUtils.IsLand(elevation)){
-            map.SetPixel(x, y, new Color( 0, 0, 1, 1 ));
-        }else{
-            map.SetPixel(x, y, biomMap.GetPixel(posX, posY));
-        }
-            }
-        }
+		circulationIntensitySlider.Connect ("value_changed", this, "SliderTriggered");
+		precipitationIntesitySlider.Connect ("value_changed", this, "SliderTriggered");
+		maxPrecipitationSlider.Connect ("value_changed", this, "SliderTriggered");
 
-        map.Unlock();
+        //Circulation
 
-        ImageTexture texture = new ImageTexture();
-        texture.CreateFromImage(map);
-        canvas.SetTexture(texture);
-        IOManager.SaveImage("./", IMAGE_SAVE_NAME, map);
-        AddChild(canvas);
-    }
+	    windIntesitySlider.Value = config.circulation.wind_intensity;
+		windIntesityBox.Value = config.circulation.wind_intensity;
 
-        private void GenerateNoiseImage(){
-        SetConfiguration();
+		windRangeSlider.Value = config.circulation.wind_range;
+		windRangeBox.Value = config.circulation.wind_range;
 
-        weltschmerz.Configure(config);
+		pressureAtSeaLevelBox.Value = config.circulation.pressure_at_sea_level;
 
-        map = new Image();
-        map.Create(config.longitude, config.latitude, false, biomMap.GetFormat());
+		windIntesityBox.Connect ("value_changed", this, "BoxTriggered");
+		windRangeBox.Connect ("value_changed", this, "BoxTriggered");
+		pressureAtSeaLevelBox.Connect ("value_changed", this, "BoxTriggered");
 
-        map.Lock();
-        for(int x = 0; x < config.longitude; x++){
-            for(int y = 0; y < config.latitude; y ++){
-                float elevation = (float)weltschmerz.GetElevation(x, y)/(float)(Math.Abs(config.minElevation) + config.maxElevation);
-                map.SetPixel(x, y, new Color(elevation, elevation, elevation, 1));
-            }
-        }
+		windIntesitySlider.Connect ("value_changed", this, "SliderTriggered");
+		windRangeSlider.Connect ("value_changed", this, "SliderTriggered");
 
-        map.Unlock();
+        //Transpiration
+        transpirationSlider.Value = config.humidity.transpiration;
+		transpirationBox.Value = config.humidity.transpiration;
 
-        ImageTexture texture = new ImageTexture();
-        texture.CreateFromImage(map);
-        canvas.SetTexture(texture);
-        //IOManager.SaveImage("./", IMAGE_SAVE_NAME, map);
-        AddChild(canvas);
-    }
+		evaporationSlider.Value = config.humidity.evaporation;
+		evaporationBox.Value = config.humidity.evaporation;
 
-    private void SetConfiguration(){
-          if(USE_DEFAULT_CONFIG){
-            weltschmerz = new Weltschmerz();
-            config = weltschmerz.GetConfig();
-        }else{
-            config = new Config();
-            config.seed = SEED;
-            config.avgTerrain = AVERAGE_TERRAIN_HIGHT;
-            config.frequency = FREQUENCY;
-            config.latitude = LATITUDE;
-            config.longitude = LONGITUDE;
-            config.maxElevation = MAX_ELEVATION;
-            config.terrainMP = TERRAIN_MULTIPLAIER;
-            weltschmerz = new Weltschmerz(config);
-        }
-    }
+		transpirationBox.Connect ("value_changed", this, "BoxTriggered");
+		evaporationBox.Connect ("value_changed", this, "BoxTriggered");
+
+		transpirationSlider.Connect ("value_changed", this, "SliderTriggered");
+		evaporationSlider.Connect ("value_changed", this, "SliderTriggered");
+
+        //Temperature
+        minTemperatureSlider.Value =config.temperature.min_temperature;
+		minTemperatureBox.Value = config.temperature.min_temperature;
+
+		maxTemperatureSlider.Value = config.temperature.max_temperature;
+		maxTemperatureBox.Value = config.temperature.max_temperature;
+
+		maxTemperatureBox.Connect ("value_changed", this, "BoxTriggered");
+		minTemperatureBox.Connect ("value_changed", this, "BoxTriggered");
+
+		maxTemperatureSlider.Connect ("value_changed", this, "SliderTriggered");
+		minTemperatureSlider.Connect ("value_changed", this, "SliderTriggered");
+
+        //Elevation
+        minElevation.Value = config.elevation.min_elevation;
+		maxElevation.Value = config.elevation.max_elevation;
+		waterLevel.Value = config.elevation.water_level;
+		frequencyBox.Value = config.elevation.frequency;
+		frequencySlider.Value = config.elevation.frequency;
+		octavesBox.Value = config.elevation.octaves;
+		octavesSlider.Value = config.elevation.octaves;
+
+        minElevation.Connect ("value_changed", this, "BoxTriggered");
+		maxElevation.Connect ("value_changed", this, "BoxTriggered");
+		waterLevel.Connect ("value_changed", this, "BoxTriggered");
+		frequencyBox.Connect ("value_changed", this, "BoxTriggered");
+		frequencySlider.Connect ("value_changed", this, "SliderTriggered");
+		octavesBox.Connect ("value_changed", this, "BoxTriggered");
+		octavesSlider.Connect ("value_changed", this, "SliderTriggered");
+    }   
+
+	private void BoxTriggered (int value) {
+
+        //General
+        config.map.seed = (int) seed.Value;
+		config.map.latitude = (int) latitude.Value;
+		config.map.longitude = (int) longitude.Value;
+
+   
+        config.precipitation.circulation_intensity = circulationIntensityBox.Value;
+		config.precipitation.precipitation_intensity = precipitationIntesityBox.Value;
+		config.precipitation.max_precipitation = (int) maxPrecipitationBox.Value ;
+
+		circulationIntensitySlider.Value = circulationIntensityBox.Value;
+		precipitationIntesitySlider.Value = precipitationIntesityBox.Value;
+		maxPrecipitationSlider.Value = maxPrecipitationBox.Value;
+
+        //Circulation
+		config.circulation.wind_intensity = windIntesityBox.Value;
+		config.circulation.wind_range = (int) windRangeBox.Value;
+		config.circulation.pressure_at_sea_level = (int) pressureAtSeaLevelBox.Value;
+
+		windIntesitySlider.Value = windIntesityBox.Value;
+		windRangeSlider.Value = windRangeBox.Value;
+
+        //Humidity
+        config.humidity.transpiration = transpirationBox.Value;
+		config.humidity.evaporation = evaporationBox.Value;
+
+		transpirationSlider.Value = transpirationBox.Value;
+		evaporationSlider.Value = evaporationBox.Value;
+        
+        //Temperature
+        config.temperature.max_temperature = (int) maxTemperatureBox.Value;
+		config.temperature.min_temperature = (int) minTemperatureBox.Value;
+
+		maxTemperatureSlider.Value = maxTemperatureBox.Value;
+		minTemperatureSlider.Value = minTemperatureBox.Value;
+
+        //Elevation
+        config.elevation.max_elevation = (int) maxElevation.Value;
+		config.elevation.min_elevation = (int) minElevation.Value;
+		config.elevation.water_level = (int) waterLevel.Value;
+		config.elevation.frequency = frequencyBox.Value;
+
+		frequencySlider.Value = frequencyBox.Value;
+		octavesSlider.Value = octavesBox.Value;
+	}
+
+	private void SliderTriggered (int value) {
+
+        //Precipitation
+        config.precipitation.circulation_intensity = circulationIntensitySlider.Value;
+		config.precipitation.precipitation_intensity = precipitationIntesitySlider.Value;
+		config.precipitation.max_precipitation = (int) maxPrecipitationSlider.Value;
+
+		circulationIntensityBox.Value = circulationIntensitySlider.Value;
+		precipitationIntesityBox.Value = precipitationIntesitySlider.Value;
+		maxPrecipitationBox.Value = maxPrecipitationSlider.Value;
+
+        //Circulation
+		config.circulation.wind_intensity = windIntesitySlider.Value;
+		config.circulation.wind_range = (int) windRangeSlider.Value;
+
+		windIntesityBox.Value = windIntesitySlider.Value;
+		windRangeBox.Value = windRangeSlider.Value;
+
+        //Humidity
+        config.humidity.transpiration = transpirationSlider.Value;
+		config.humidity.evaporation = evaporationSlider.Value;
+
+		transpirationBox.Value = transpirationSlider.Value;
+		evaporationBox.Value = evaporationSlider.Value;
+
+        //Temperature
+        config.temperature.max_temperature = (int) maxTemperatureSlider.Value;
+		config.temperature.min_temperature = (int) minTemperatureSlider.Value;
+
+		maxTemperatureBox.Value = maxTemperatureSlider.Value;
+		minTemperatureBox.Value = minTemperatureSlider.Value;
+
+        //Elevation
+        config.elevation.frequency = frequencySlider.Value;
+		config.elevation.octaves = (int) octavesSlider.Value;
+
+		frequencyBox.Value = frequencySlider.Value;
+		octavesBox.Value = octavesSlider.Value;
+	}
 }

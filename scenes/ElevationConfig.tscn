@@ -1,0 +1,95 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://scenes/adjustable/Edit.tscn" type="PackedScene" id=2]
+[ext_resource path="res://scenes/adjustable/Slider.tscn" type="PackedScene" id=3]
+
+[node name="Children" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Title" type="Label" parent="."]
+anchor_right = 1.0
+text = "Noise Values"
+align = 1
+
+[node name="Max elevation" parent="." instance=ExtResource( 2 )]
+anchor_top = 0.1
+anchor_bottom = 0.15
+hint_tooltip = "Max elevation which can terrain achieve
+"
+
+[node name="Label" parent="Max elevation" index="0"]
+text = "Max elevation:"
+
+[node name="SpinBox" parent="Max elevation" index="1"]
+max_value = 10000.0
+
+[node name="Min elevation" parent="." instance=ExtResource( 2 )]
+anchor_top = 0.2
+anchor_bottom = 0.25
+
+[node name="Label" parent="Min elevation" index="0"]
+text = "Min elevation"
+
+[node name="SpinBox" parent="Min elevation" index="1"]
+min_value = -10000.0
+max_value = 0.0
+
+[node name="Water Level" parent="." instance=ExtResource( 2 )]
+anchor_top = 0.3
+anchor_bottom = 0.35
+
+[node name="Label" parent="Water Level" index="0"]
+text = "Water Level"
+
+[node name="SpinBox" parent="Water Level" index="1"]
+min_value = -10000.0
+max_value = 10000.0
+
+[node name="Frequency" parent="." instance=ExtResource( 3 )]
+anchor_top = 0.4
+anchor_bottom = 0.45
+hint_tooltip = "Frequency of noise"
+
+[node name="Title" parent="Frequency" index="0"]
+text = "Frequency"
+
+[node name="HSlider" parent="Frequency" index="1"]
+max_value = 10.0
+step = 0.01
+page = 1.0
+
+[node name="SpinBox" parent="Frequency" index="2"]
+max_value = 10.0
+step = 0.01
+page = 1.0
+
+[node name="Octaves" parent="." instance=ExtResource( 3 )]
+anchor_top = 0.5
+anchor_bottom = 0.55
+hint_tooltip = "Noise octaves"
+
+[node name="Title" parent="Octaves" index="0"]
+text = "Octaves"
+
+[node name="HSlider" parent="Octaves" index="1"]
+max_value = 10.0
+step = 1.0
+page = 1.0
+
+[node name="SpinBox" parent="Octaves" index="2"]
+max_value = 10.0
+page = 1.0
+
+[editable path="Max elevation"]
+
+[editable path="Min elevation"]
+
+[editable path="Water Level"]
+
+[editable path="Frequency"]
+
+[editable path="Octaves"]

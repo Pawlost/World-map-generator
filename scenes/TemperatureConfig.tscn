@@ -1,0 +1,45 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://scenes/adjustable/Slider.tscn" type="PackedScene" id=2]
+
+[node name="Children" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Title" type="Label" parent="."]
+anchor_right = 1.0
+text = "Temperature Values"
+align = 1
+
+[node name="Max Temperature" parent="." instance=ExtResource( 2 )]
+anchor_top = 0.1
+anchor_bottom = 0.15
+hint_tooltip = "Highest temperature located around the equator"
+
+[node name="Title" parent="Max Temperature" index="0"]
+text = "Max Temperature:"
+
+[node name="HSlider" parent="Max Temperature" index="1"]
+step = 1.0
+page = 1.0
+
+[node name="SpinBox" parent="Max Temperature" index="2"]
+page = 1.0
+
+[node name="Min Temperature" parent="." instance=ExtResource( 2 )]
+anchor_top = 0.2
+anchor_bottom = 0.25
+hint_tooltip = "Lowest temperature located around the poles"
+
+[node name="Title" parent="Min Temperature" index="0"]
+text = "Min Temperature"
+
+[node name="HSlider" parent="Min Temperature" index="1"]
+min_value = -100.0
+max_value = 0.0
+step = 1.0
+page = 1.0
+
+[editable path="Max Temperature"]
+
+[editable path="Min Temperature"]

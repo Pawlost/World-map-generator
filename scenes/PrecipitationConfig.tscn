@@ -1,0 +1,83 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://scenes/adjustable/Slider.tscn" type="PackedScene" id=2]
+
+[node name="Children" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Title" type="Label" parent="."]
+anchor_right = 1.0
+text = "Precipitation Values"
+align = 1
+
+[node name="Circulation intensity" parent="." instance=ExtResource( 2 )]
+anchor_top = 0.1
+anchor_bottom = 0.15
+hint_tooltip = "Effect of circulation on precipitation (Should be smaller then 1)
+"
+
+[node name="Title" parent="Circulation intensity" index="0"]
+text = "Circulation intensity:"
+
+[node name="HSlider" parent="Circulation intensity" index="1"]
+max_value = 1.0
+step = 0.01
+page = 1.0
+
+[node name="SpinBox" parent="Circulation intensity" index="2"]
+max_value = 1.0
+step = 0.001
+page = 1.0
+
+[node name="Precipitation Intensity" parent="." instance=ExtResource( 2 )]
+anchor_top = 0.2
+anchor_bottom = 0.25
+hint_tooltip = "Precipitation intensity in the world
+
+The lower the more deserts
+
+The higher the more jungles"
+
+[node name="Title" parent="Precipitation Intensity" index="0"]
+text = "Precipitation Intensity"
+
+[node name="HSlider" parent="Precipitation Intensity" index="1"]
+max_value = 2.0
+step = 0.001
+page = 1.0
+
+[node name="SpinBox" parent="Precipitation Intensity" index="2"]
+max_value = 2.0
+step = 0.001
+page = 1.0
+
+[node name="Max Precipitation" parent="." instance=ExtResource( 2 )]
+anchor_top = 0.3
+anchor_bottom = 0.35
+hint_tooltip = "Default maximum precipitation
+
+Determines range of precipitation from 0 to chosen value
+
+Unit is mm"
+
+[node name="Title" parent="Max Precipitation" index="0"]
+text = "Max Precipitation"
+
+[node name="HSlider" parent="Max Precipitation" index="1"]
+max_value = 10000.0
+step = 1.0
+page = 1.0
+
+[node name="SpinBox" parent="Max Precipitation" index="2"]
+max_value = 10000.0
+page = 1.0
+
+[editable path="Circulation intensity"]
+
+[editable path="Precipitation Intensity"]
+
+[editable path="Max Precipitation"]
